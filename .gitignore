@@ -29,3 +29,6 @@ yarn-error.log*
 
 # typescript
 *.tsbuildinfo
+
+# LP estática legada (migrada para app/page.tsx)
+/index.html
