@@ -1,6 +1,15 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "framework": "nextjs",
-  "buildCommand": "next build",
-  "installCommand": "npm install"
+  "framework": null,
+  "outputDirectory": "public",
+  "rewrites": [
+    {
+      "source": "/blog",
+      "destination": "https://blog-production-b190.up.railway.app/"
+    },
+    {
+      "source": "/blog/:caminho(.*)",
+      "destination": "https://blog-production-b190.up.railway.app/:caminho"
+    }
+  ]
 }
