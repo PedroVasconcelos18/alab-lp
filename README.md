@@ -51,27 +51,31 @@ vaza o hostname do Railway nos links.
 ⚠️ O `vercel.json` **rejeita chave desconhecida** e falha na validação, antes do
 build (§4.1). Comentário explicativo vai neste README, nunca no JSON.
 
-## 🔴 Apex e `www` discordam hoje
+## Apex e `www`: resolvido no `www`, e não era cosmético
 
-Medido em produção: `alabventure.com/*` responde **307 para `www.alabventure.com`**
-— o `www` é o domínio primário do projeto na Vercel. Mas o `<head>` desta LP
-declara `canonical` e `og:url` no **apex**, e o `WP_HOME` do blog também. São
-dois sinais opostos para o mesmo conteúdo.
+O site canônico é **`www.alabventure.com`**. O apex responde 307 para ele, que é
+o primário na Vercel.
 
-Funciona assim mesmo: o `/blog` chega ao WordPress depois do 307. O custo é um
-redirect em **todo link interno** que o WordPress emite, e um canonical que
-aponta para uma URL que redireciona — exatamente o tipo de sinal ambíguo que a
-escolha por subdiretório (§1 do playbook) existe para evitar.
+Isso já foi tratado aqui como "funciona, só custa um redirect". **Estava
+errado.** Com o `WP_HOME` do blog no apex e a página servida no `www`, toda URL
+REST que o WordPress gera aponta para o apex — e navegador **não segue redirect
+em preflight de CORS**:
 
-Escolha um, e o outro segue:
+```text
+Access to fetch at 'https://alabventure.com/blog/wp-json/...'
+from origin 'https://www.alabventure.com' — blocked by CORS policy:
+Redirect is not allowed for a preflight request.
+```
 
-| Se o primário for | Vercel | `WP_HOME` / `WP_SITEURL` | `public/index.html` |
-| --- | --- | --- | --- |
-| **apex** (o que os arquivos dizem hoje) | trocar o primário para `alabventure.com` | como está | como está |
-| **www** | como está | prefixar `www.` | trocar `canonical` e `og:url` |
+Quebrava de verdade: a curtida não registrava, e o `wp-admin` perdia
+`users/me` e estourava `SecurityError` no `replaceState`. Nada disso aparece em
+`curl`, e nada aparece em ambiente local, onde não existe a divisão apex/www.
 
-O primário é o toggle *Domains* do projeto na Vercel; o resto é uma variável no
-Railway e duas linhas de HTML.
+Então tudo aponta para `www` agora: `WP_HOME`, `WP_SITEURL`, e o `canonical` /
+`og:url` / `og:image` desta LP.
+
+> Se um dia o apex for preferido, a troca é nos dois lados **juntos**: primário
+> na Vercel e as duas variáveis no Railway. Meio caminho é o bug acima.
 
 ## Rodar local
 
