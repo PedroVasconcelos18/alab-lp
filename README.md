@@ -44,7 +44,7 @@ Duas regras, não uma: `/blog/:caminho(.*)` não casa `/blog` sem barra. E é
 barra, que é justamente a que o navegador manda (§4.3).
 
 O prefixo `/blog` **é removido** ao chegar na origem: o WordPress vive na raiz do
-serviço do Railway e é o `WP_HOME=https://alabventure.com/blog` que faz ele emitir
+serviço do Railway e é o `WP_HOME=https://www.alabventure.com/blog` que faz ele emitir
 os links públicos certos. Não inverta isso — origem que se apresenta como destino
 vaza o hostname do Railway nos links.
 
@@ -94,8 +94,9 @@ Adaptado do §6 do playbook — o que é específico daqui:
 
 - [ ] Serviço WordPress no ar no Railway, com **volume montado em `/data`**, e um
       redeploy provou que o dado sobreviveu
-- [ ] `WP_HOME=https://alabventure.com/blog` (o caminho público, não o host da origem)
-- [ ] `WP_SITEURL=https://alabventure.com/blog/wp`
+- [ ] `WP_HOME=https://www.alabventure.com/blog` (o caminho público, não o host da origem)
+- [ ] `WP_SITEURL=https://www.alabventure.com/blog/wp`
+- [ ] `WP_HOME` no MESMO host que serve a página (apex vs `www` quebra CORS do REST)
 - [ ] `WP_ENV=production` — qualquer outro valor deixa o blog `noindex`
 - [ ] Host real no `vercel.json` (as duas regras)
 - [ ] Testado **com e sem** barra final: `/blog`, `/blog/`, `/blog/algum-post/`
