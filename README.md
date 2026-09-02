@@ -2,7 +2,8 @@
 
 Site estático servido pela Vercel. `/blog` não mora aqui: é WordPress, atrás de um
 rewrite na borda. Não existe CMS neste repositório — não existe banco, sessão,
-build nem framework.
+build nem framework. Existe **uma** função: `api/contato.js`, que despacha o
+formulário da página de contato.
 
 O desenho e as armadilhas estão em [playbook-produto-em-wordpress.md](playbook-produto-em-wordpress.md);
 este README é só a parte que é específica da A.lab.
@@ -12,7 +13,7 @@ este README é só a parte que é específica da A.lab.
 ## Topologia
 
 ```text
-alabventure.com/*        → esta LP estática (Vercel, sem build)
+alabventure.com/*        → estas páginas estáticas (Vercel, sem build)
 alabventure.com/blog/*   → WordPress (Railway)
 ```
 
@@ -20,12 +21,49 @@ O `public/` é servido cru — `outputDirectory: "public"` com `framework: null`
 `vercel.json`. Nenhum arquivo é gerado, então nada pode aparecer em `/blog` e
 roubar a precedência do rewrite (armadilha §4.4 do playbook).
 
-| Arquivo | O quê |
-| --- | --- |
-| `public/index.html` | a LP inteira, incluindo o Google Tag Manager (`GTM-KQD4V78Z`) |
-| `public/lp.css` | o estilo inteiro |
-| `public/icon.svg` | favicon |
-| `public/og.png` | imagem Open Graph 1200×630, referenciada em absoluto no `<head>` |
+| Arquivo | URL | O quê |
+| --- | --- | --- |
+| `public/index.html` | `/` | home |
+| `public/metodologia.html` | `/metodologia` | as quatro fases |
+| `public/modalidades.html` | `/modalidades` | os dois modelos de aquisição |
+| `public/portfolio.html` | `/portfolio` | as ventures |
+| `public/por-que-alab.html` | `/por-que-alab` | os diferenciais |
+| `public/contato.html` | `/contato` | formulário e canais diretos |
+| `public/faq.html` | `/faq` | perguntas frequentes, com `FAQPage` |
+| `public/termos-de-uso.html` | `/termos-de-uso` | jurídico |
+| `public/politica-de-privacidade.html` | `/politica-de-privacidade` | jurídico (LGPD) |
+| `public/mapa-do-site.html` | `/mapa-do-site` | sitemap HTML |
+| `public/sitemap.xml` | `/sitemap.xml` | sitemap XML das páginas acima |
+| `public/robots.txt` | `/robots.txt` | regras de rastreio + os dois sitemaps |
+| `api/contato.js` | `/api/contato` | a única rota dinâmica: recebe o formulário |
+| `public/lp.css` | — | o estilo inteiro, das dez páginas |
+| `public/icon.svg` | — | favicon |
+| `public/og.png` | — | imagem Open Graph 1200×630, referenciada em absoluto no `<head>` |
+
+O `.html` some da URL por causa do `"cleanUrls": true` no `vercel.json`. Não
+existe `trailingSlash` na configuração, e não pode existir: o WordPress do
+`/blog` serve URLs **com** barra final, e `trailingSlash: false` redirecionaria
+`/blog/algum-post/` para fora do lugar.
+
+## Uma página deixou de ser uma página
+
+Até agosto de 2026 o site inteiro era o `index.html`, com as seções em âncoras
+(`#metodologia`, `#modalidades`, …). Cada área virou uma URL própria porque
+âncora não é página: o Google indexa uma URL só, e `title`, `description` e
+`h1` são um par por documento — não por seção.
+
+O que ficou de dívida com essa mudança:
+
+- **Menu e rodapé estão copiados em cada arquivo.** É o preço de não ter build.
+  Mudar um link do menu é mudar dez arquivos — `sed -i '' 's/velho/novo/g'
+  public/*.html` resolve, mas confira o diff antes de commitar.
+- **As âncoras antigas ainda pousam certo.** Os cards da home carregam os `id`
+  originais, então um `/#metodologia` guardado por alguém rola até o resumo da
+  área em vez de cair no vazio.
+- **O menu no celular virou faixa rolável.** Antes ele era `display: none` abaixo
+  de 980px, o que era tolerável quando tudo vivia na mesma página. Com o
+  conteúdo espalhado em dez URLs, esconder o menu deixaria o celular sem
+  navegação.
 
 ## A linha que aponta o `/blog`
 
@@ -77,16 +115,105 @@ Então tudo aponta para `www` agora: `WP_HOME`, `WP_SITEURL`, e o `canonical` /
 > Se um dia o apex for preferido, a troca é nos dois lados **juntos**: primário
 > na Vercel e as duas variáveis no Railway. Meio caminho é o bug acima.
 
-## Rodar local
+## O formulário de contato
 
-Não tem `npm install` — é HTML e CSS.
+`POST /api/contato` valida o payload e manda um e-mail pelo **Resend** — a mesma
+conta e o mesmo remetente verificado que o blog usa (`nao-responda@alabventure.com`).
+Nada é gravado em lugar nenhum: a caixa de entrada é o banco de dados.
+
+O `reply_to` é o e-mail de quem escreveu. Responder no cliente de e-mail responde
+para a pessoa, não para o remetente automático.
+
+### Variáveis de ambiente
+
+| Variável | Obrigatória | Padrão |
+| --- | --- | --- |
+| `ALAB_RESEND_CHAVE` | **sim** | — |
+| `ALAB_EMAIL_REMETENTE` | não | `nao-responda@alabventure.com` |
+| `ALAB_CONTATO_DESTINO` | não | `contato@alabventure.com` |
+
+A chave é a mesma do blog (`ALAB_RESEND_CHAVE` no Railway). Em produção ela vai
+em Vercel → Settings → Environment Variables; local, no `.env.local`, que o
+`.gitignore` cobre.
+
+**Sem a chave a função responde 503 e o site diz que não conseguiu enviar, com o
+e-mail direto na tela.** Nunca responde "recebemos" para um lead que ninguém vai
+ler — um formulário que engole contato em silêncio é pior que formulário nenhum.
+
+### O que segura spam
+
+Três coisas, nenhuma delas um captcha:
+
+- um campo-isca (`botcheck`) invisível na tela, mas não `display:none` — há robô
+  que ignora campo escondido por display e preenche o resto;
+- tempo mínimo de preenchimento (2s), medido **no cliente** e enviado como
+  duração, para não depender do relógio do visitante bater com o do servidor;
+- limites de tamanho por campo, iguais no HTML e no servidor.
+
+As duas primeiras falham de formas **deliberadamente diferentes**. A isca é
+invisível: humano nenhum a preenche, falso positivo é impossível, então ela
+devolve `200 {ok:true}` e descarta em silêncio — contar ao robô que a armadilha
+funcionou é ensinar a próxima tentativa a desviar dela. O cronômetro erra em
+gente de verdade (autofill mais um clique cabem em dois segundos), então devolve
+`400` com "clique em enviar outra vez", que um humano resolve e um lead não se
+perde calado.
+
+Se spam virar problema de verdade, o próximo passo é Turnstile ou um limite por
+IP em KV — serverless sem estado não tem como limitar taxa sozinho.
+
+## O que ainda falta preencher
+
+Três coisas foram escritas com marcador no lugar do dado real. Buscar por elas
+antes de qualquer deploy:
 
 ```bash
-python3 -m http.server 8000 --directory public   # http://localhost:8000
+grep -rn 'PREENCHER\|RAZÃO SOCIAL' public/
 ```
 
-`/blog` não funciona local: o rewrite é da Vercel. Para testar o blog junto,
-suba o WordPress e acesse pelo domínio de preview.
+| Marcador | Onde | O que colocar |
+| --- | --- | --- |
+| `soc-vazio` | rodapé de todas as páginas, `/contato` | URLs reais de LinkedIn, Instagram e YouTube |
+| `[RAZÃO SOCIAL COMPLETA]`, `[00.000.000/0001-00]`, `[ENDEREÇO…]`, `[COMARCA]`, `[NOME DO ENCARREGADO]` | `termos-de-uso.html`, `politica-de-privacidade.html` | dados cadastrais e o encarregado de LGPD |
+
+Os marcadores jurídicos são renderizados em âmbar, com a classe `.todo` — se
+alguém publicar sem preencher, aparece na tela.
+
+As redes sociais seguem outra regra: **sem URL, não há link.** Cada item é um
+`<span class="soc-vazio">`, com ícone e nome, mas sem `href` — um link para
+"lugar nenhum" seria um 404, e isto não é link nenhum. Pelo mesmo motivo o
+`sameAs` saiu do JSON-LD: declarar ao Google perfis que não respondem é uma
+afirmação falsa sobre a identidade da empresa, pior do que não afirmar nada.
+
+Ao receber os links, os `<span>` voltam a ser
+`<a href="…" target="_blank" rel="noopener me">` e o `sameAs` volta ao
+`Organization` de `index.html` e `contato.html`.
+
+## Rodar local
+
+Não tem `npm install` — é HTML, CSS e uma função.
+
+```bash
+vercel dev --listen 8000      # http://localhost:8000
+```
+
+`vercel dev` é o único jeito de testar o formulário e as URLs sem `.html`: ele
+roda a função e aplica o `cleanUrls`. Precisa da chave no `.env.local`:
+
+```bash
+grep '^ALAB_RESEND_CHAVE=' ../alab-wordpress/.env.railway >> .env.local
+```
+
+Para mexer só em HTML e CSS, o servidor burro continua servindo:
+
+```bash
+python3 -m http.server 8000 --directory public
+```
+
+Aí o `.html` fica visível na URL, os links do menu dão 404 e `/api/contato` não
+existe — nada disso é bug, é a Vercel que não está no meio.
+
+`/blog` não funciona em nenhum dos dois: o rewrite é da Vercel em produção. Para
+testar o blog junto, suba o WordPress e acesse pelo domínio de preview.
 
 ## Checklist antes de apontar o `/blog`
 

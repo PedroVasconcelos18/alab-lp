@@ -1,0 +1,35 @@
+User-agent: *
+Disallow: /wp-admin/
+Allow: /wp-admin/admin-ajax.php
+Disallow: /wp-includes/
+Disallow: /*?*replytocom=
+Content-Signal: ai-train=yes, search=yes, ai-input=yes
+
+# O WordPress deste site vive sob /blog (Bedrock): o core fica em /blog/wp.
+# As regras acima são o padrão de instalação na raiz; estas são os caminhos reais.
+Disallow: /blog/wp/wp-admin/
+Allow: /blog/wp/wp-admin/admin-ajax.php
+Disallow: /blog/wp/wp-includes/
+
+# OpenAI (ChatGPT, SearchGPT e Plugins)
+User-agent: GPTBot
+Allow: /
+User-agent: OAI-SearchBot
+Allow: /
+User-agent: ChatGPT-User
+Allow: /
+
+# Anthropic (Claude)
+User-agent: ClaudeBot
+Allow: /
+
+# Perplexity AI
+User-agent: PerplexityBot
+Allow: /
+
+# Google (Gemini e AI Overviews)
+User-agent: Google-Extended
+Allow: /
+
+Sitemap: https://www.alabventure.com/sitemap.xml
+Sitemap: https://www.alabventure.com/blog/sitemap_index.xml
