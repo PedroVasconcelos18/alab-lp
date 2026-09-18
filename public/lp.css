@@ -2416,16 +2416,6 @@
   }
   .footer-social a:hover { color: var(--silver-100); }
   .soc-icon { width: 17px; height: 17px; flex-shrink: 0; }
-  /* Rede sem URL conhecida: mesmo desenho, sem href. Um link para "lugar
-     nenhum" seria um 404; isto não é link nenhum. */
-  .footer-social .soc-vazio {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    color: var(--silver-500);
-    font-size: 14.5px;
-    cursor: default;
-  }
 
   /* Página atual marcada no menu. */
   .nav-links a[aria-current="page"] { color: var(--silver-100); }

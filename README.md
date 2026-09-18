@@ -163,8 +163,8 @@ IP em KV — serverless sem estado não tem como limitar taxa sozinho.
 
 ## O que ainda falta preencher
 
-Três coisas foram escritas com marcador no lugar do dado real. Buscar por elas
-antes de qualquer deploy:
+Os dados cadastrais continuam escritos com marcador no lugar do dado real.
+Buscar por eles antes de qualquer deploy:
 
 ```bash
 grep -rn 'PREENCHER\|RAZÃO SOCIAL' public/
@@ -172,21 +172,25 @@ grep -rn 'PREENCHER\|RAZÃO SOCIAL' public/
 
 | Marcador | Onde | O que colocar |
 | --- | --- | --- |
-| `soc-vazio` | rodapé de todas as páginas, `/contato` | URLs reais de LinkedIn, Instagram e YouTube |
 | `[RAZÃO SOCIAL COMPLETA]`, `[00.000.000/0001-00]`, `[ENDEREÇO…]`, `[COMARCA]`, `[NOME DO ENCARREGADO]` | `termos-de-uso.html`, `politica-de-privacidade.html` | dados cadastrais e o encarregado de LGPD |
 
 Os marcadores jurídicos são renderizados em âmbar, com a classe `.todo` — se
 alguém publicar sem preencher, aparece na tela.
 
-As redes sociais seguem outra regra: **sem URL, não há link.** Cada item é um
-`<span class="soc-vazio">`, com ícone e nome, mas sem `href` — um link para
-"lugar nenhum" seria um 404, e isto não é link nenhum. Pelo mesmo motivo o
-`sameAs` saiu do JSON-LD: declarar ao Google perfis que não respondem é uma
-afirmação falsa sobre a identidade da empresa, pior do que não afirmar nada.
+As redes sociais deixaram de ser pendência. A regra que valia — **sem URL,
+não há link** — foi cumprida do jeito certo: os perfis chegaram, então os
+`<span class="soc-vazio">` viraram `<a target="_blank" rel="noopener me">` e o
+`sameAs` voltou ao `Organization` de `index.html` e `contato.html`.
 
-Ao receber os links, os `<span>` voltam a ser
-`<a href="…" target="_blank" rel="noopener me">` e o `sameAs` volta ao
-`Organization` de `index.html` e `contato.html`.
+| Rede | URL |
+| --- | --- |
+| Instagram | `https://www.instagram.com/alab.vbuilder/` |
+| YouTube | `https://www.youtube.com/@alab.venture` |
+
+O LinkedIn foi removido: não há perfil, e ícone de rede que não existe é pior
+do que ausência. A classe `.soc-vazio` saiu do `lp.css` junto — não sobrou
+nenhum item sem `href` para estilizá-la. Se algum dia entrar uma rede nova sem
+URL confirmada, a regra continua de pé: não entra até o link existir.
 
 ## Rodar local
 
