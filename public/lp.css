@@ -2328,6 +2328,7 @@
   .legal .post-body { max-width: 820px; }
   .legal .post-body { margin-top: 0; }
   .legal .post-body h2:first-child { margin-top: 0; }
+  .legal .post-body h2 { scroll-margin-top: 96px; } /* âncoras do sumário não somem sob a nav fixa */
   .post-body table {
     width: 100%;
     border-collapse: collapse;

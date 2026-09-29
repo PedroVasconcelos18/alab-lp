@@ -31,7 +31,7 @@ roubar a precedência do rewrite (armadilha §4.4 do playbook).
 | `public/contato.html` | `/contato` | formulário e canais diretos |
 | `public/faq.html` | `/faq` | perguntas frequentes, com `FAQPage` |
 | `public/termos-de-uso.html` | `/termos-de-uso` | jurídico |
-| `public/politica-de-privacidade.html` | `/politica-de-privacidade` | jurídico (LGPD) |
+| `desativado/politica-de-privacidade.html` | — | jurídico (LGPD), fora do ar: fora de `public/`, links e sitemap comentados |
 | `public/mapa-do-site.html` | `/mapa-do-site` | sitemap HTML |
 | `public/sitemap.xml` | `/sitemap.xml` | sitemap XML das páginas acima |
 | `public/robots.txt` | `/robots.txt` | regras de rastreio + os dois sitemaps |
@@ -172,7 +172,7 @@ grep -rn 'PREENCHER\|RAZÃO SOCIAL' public/
 
 | Marcador | Onde | O que colocar |
 | --- | --- | --- |
-| `[RAZÃO SOCIAL COMPLETA]`, `[00.000.000/0001-00]`, `[ENDEREÇO…]`, `[COMARCA]`, `[NOME DO ENCARREGADO]` | `termos-de-uso.html`, `politica-de-privacidade.html` | dados cadastrais e o encarregado de LGPD |
+| `[RAZÃO SOCIAL COMPLETA]`, `[00.000.000/0001-00]`, endereço, comarca, encarregado (nome e e-mail), datas de atualização e vigência, prazo de sigilo da 8.5 | `termos-de-uso.html` | dados cadastrais e o encarregado de LGPD |
 
 Os marcadores jurídicos são renderizados em âmbar, com a classe `.todo` — se
 alguém publicar sem preencher, aparece na tela.
