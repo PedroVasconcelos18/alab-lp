@@ -3,6 +3,13 @@
   "framework": null,
   "outputDirectory": "public",
   "cleanUrls": true,
+  "redirects": [
+    {
+      "source": "/portfolio",
+      "destination": "/produtos",
+      "permanent": true
+    }
+  ],
   "rewrites": [
     {
       "source": "/blog",

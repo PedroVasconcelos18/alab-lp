@@ -26,7 +26,7 @@ roubar a precedência do rewrite (armadilha §4.4 do playbook).
 | `public/index.html` | `/` | home |
 | `public/metodologia.html` | `/metodologia` | as quatro fases |
 | `public/modalidades.html` | `/modalidades` | os dois modelos de aquisição |
-| `public/portfolio.html` | `/portfolio` | as ventures |
+| `public/produtos.html` | `/produtos` | as ventures (era `/portfolio`, que agora redireciona com 301 no `vercel.json`) |
 | `public/por-que-alab.html` | `/por-que-alab` | os diferenciais |
 | `public/contato.html` | `/contato` | formulário e canais diretos |
 | `public/faq.html` | `/faq` | perguntas frequentes, com `FAQPage` |
@@ -231,7 +231,7 @@ Adaptado do §6 do playbook — o que é específico daqui:
 - [ ] `WP_ENV=production` — qualquer outro valor deixa o blog `noindex`
 - [ ] Host real no `vercel.json` (as duas regras)
 - [ ] Testado **com e sem** barra final: `/blog`, `/blog/`, `/blog/algum-post/`
-- [ ] Testado **clicando** no link "Conteúdo" do menu, não só com `curl`
+- [ ] Testado **clicando** no link "Blog" do menu, não só com `curl`
 - [ ] Backup do banco baixado para fora do Railway
 
 ## O que foi removido, e o que quebrou junto

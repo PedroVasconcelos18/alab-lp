@@ -250,7 +250,7 @@
     align-items: center;
   }
   .hero h1 {
-    font-size: clamp(48px, 6.4vw, 92px);
+    font-size: clamp(40px, 4.8vw, 68px); /* h1 de SEO é longo: 92px quebrava em seis linhas */
     margin: 28px 0 28px;
     font-weight: 600;
   }
@@ -910,7 +910,8 @@
     pointer-events: none;
   }
 
-  .vh-clama-art {
+  .vh-clama-art,
+  .vh-bora-art {
     position: relative;
     width: 78%;
     max-width: 360px;
@@ -936,6 +937,17 @@
     animation: pulse 1.6s ease-in-out infinite;
   }
   .vh-readout-bl { bottom: 18px; left: 20px; }
+
+  /* Bora: mesmo card do Clama, com o verde da marca no lugar do dourado */
+  .venture-hero.bora::before { background: linear-gradient(90deg, transparent, #2BD86B, transparent); }
+  .venture-hero.bora .vh-visual {
+    background:
+      radial-gradient(ellipse 70% 50% at 50% 105%, rgba(18, 184, 92, 0.22), transparent 65%),
+      linear-gradient(180deg, #0a1224 0%, #081a10 100%);
+  }
+  .venture-hero.bora .vh-readout-tr { color: #2BD86B; }
+  .venture-hero.bora .vh-content h3 { background-image: linear-gradient(180deg, #DFF6E8 0%, #2BD86B 50%, #12B85C 100%); }
+  .venture-hero.bora .vh-readout-tr::before { background: #2BD86B; box-shadow: 0 0 10px rgba(43, 216, 107, 0.6); }
   .vh-readout-br { bottom: 18px; right: 20px; }
 
   .vh-content {
@@ -2079,14 +2091,14 @@
     letter-spacing: 0.14em;
     color: var(--silver-500);
   }
-  .area-card h2 {
+  .area-card h3 {
     font-size: 27px;
     font-weight: 600;
     letter-spacing: -0.015em;
     margin-top: 14px;
   }
-  .area-card h2 a { color: var(--silver-100); text-decoration: none; }
-  .area-card h2 a:hover { color: var(--accent); }
+  .area-card h3 a { color: var(--silver-100); text-decoration: none; }
+  .area-card h3 a:hover { color: var(--accent); }
   .area-card > p {
     margin-top: 14px;
     color: var(--silver-300);
