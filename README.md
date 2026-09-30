@@ -186,6 +186,9 @@ não há link** — foi cumprida do jeito certo: os perfis chegaram, então os
 | --- | --- |
 | Instagram | `https://www.instagram.com/alab.vbuilder/` |
 | YouTube | `https://www.youtube.com/@alab.venture` |
+| X | `https://x.com/alabventureb` |
+| TikTok | `https://www.tiktok.com/@alabventureb` |
+| Reddit | `https://www.reddit.com/user/alab-venture/` |
 
 O LinkedIn foi removido: não há perfil, e ícone de rede que não existe é pior
 do que ausência. A classe `.soc-vazio` saiu do `lp.css` junto — não sobrou
